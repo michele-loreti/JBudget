@@ -50,10 +50,33 @@ public interface Account extends ElementWithId {
     double getOpeningBalance();
 
     /**
+     * Returns the opening balance.
+     *
+     * @param openingBalance the opening balance.
+     * @throws IllegalArgumentException when <code>!getAccountType().isValidOpening(amount)</code>.
+     */
+    void setOpeningBalance(double openingBalance);
+
+    /**
      * Returns the current balance for this account.
      *
      * @return the current balance for this account.
      */
     double getBalance();
+
+    /**
+     * Sets description of this account.
+     *
+     * @param description the description of this account.
+     */
+    void setDescription(String description);
+
+
+    /**
+     * Sets name of this account.
+     *
+     * @param name sets name of this account.
+     */
+    void setName(String name);
 
 }

@@ -8,9 +8,7 @@
 
 package it.unicam.cs.pa.jbudget.list;
 
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * This is a transaction associated with a specific ledger.
@@ -23,6 +21,7 @@ public class LedgerTransaction extends AbstractElementWithId implements Transact
     private Date date;
     private final List<Movement> movements;
     private String description;
+    private final Set<Tag> tags;
 
     /**
      * Creates a transaction associated with the given ledger and having the
@@ -33,7 +32,7 @@ public class LedgerTransaction extends AbstractElementWithId implements Transact
      * @param ledger ledger associated with the transaction.
      */
     public LedgerTransaction(Integer id, Ledger ledger) {
-        this(id, ledger, new Date(), new LinkedList<>(), "");
+        this(id, ledger, new Date(), List.of(), "");
     }
 
     /**
@@ -44,12 +43,13 @@ public class LedgerTransaction extends AbstractElementWithId implements Transact
      * @param date transaction date.
      * @param movements list of movements in the transaction.
      */
-    public LedgerTransaction(int id, Ledger ledger, Date date, List<Movement> movements, String description) {
+    public LedgerTransaction(int id, Ledger ledger, Date date, List<Movement> movements, String description, Tag ... tags) {
         super(id);
         this.ledger = ledger;
         this.date = date;
-        this.movements = movements;
+        this.movements = new ArrayList<>(movements);
         this.description = description;
+        this.tags = new TreeSet<>(List.of(tags));
     }
 
     /**
@@ -75,7 +75,7 @@ public class LedgerTransaction extends AbstractElementWithId implements Transact
     public double balance() {
         double toReturn = 0.0;
         for (Movement m: getMovements()) {
-            toReturn += m.getAmount();
+            toReturn += m.amount();
         }
         return toReturn;
     }
@@ -87,7 +87,7 @@ public class LedgerTransaction extends AbstractElementWithId implements Transact
 
     @Override
     public List<Tag> getTags() {
-        return null;
+        return List.copyOf(tags);
     }
 
     @Override
@@ -99,4 +99,32 @@ public class LedgerTransaction extends AbstractElementWithId implements Transact
     public void setDescription(String description) {
         this.description = description;
     }
+
+    @Override
+    public void addMovement(Account a, double amount, String description) {
+        Objects.requireNonNull(a);
+        Objects.requireNonNull(description);
+        this.movements.add(new Movement(a, amount, description));
+    }
+
+    @Override
+    public boolean removeMovement(Movement m) {
+        return movements.remove(m);
+    }
+
+    @Override
+    public int size() {
+        return movements.size();
+    }
+
+    @Override
+    public Movement getMovement(int i) {
+        return movements.get(i);
+    }
+
+    @Override
+    public void setMovement(int i, Movement m) {
+        movements.set(i, m);
+    }
+
 }

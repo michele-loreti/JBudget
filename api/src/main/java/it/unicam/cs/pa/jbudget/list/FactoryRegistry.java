@@ -9,10 +9,7 @@
 package it.unicam.cs.pa.jbudget.list;
 
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiFunction;
 
 /**
@@ -24,7 +21,7 @@ import java.util.function.BiFunction;
  */
 public class FactoryRegistry<R,T extends ElementWithId> implements Registry<R,T> {
 
-    private final Map<Integer,T> elements = new HashMap<>();
+    private final Map<Integer,T> elements = new TreeMap<>();
     private int lastId = -1;
     private final BiFunction<Integer,R,T> factoryFunction;
 

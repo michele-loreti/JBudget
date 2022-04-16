@@ -9,35 +9,12 @@
 package it.unicam.cs.pa.jbudget.list;
 
 /**
- * A movement represents an action performed in an account. It can
+ * A movement represents an operation performed over an account.
+ *
+ * @param account account involved in the movement.
+ * @param amount the amount of the movement.
+ * @param description a short description of the movement.
  */
-public interface Movement {
+public record Movement(Account account, double amount, String description) {
 
-    /**
-     * Returns the account involved in the movement.
-     *
-     * @return the account involved in the movement.
-     */
-    Account getAccount();
-
-    /**
-     * Returns the amount associated with this movement.
-     *
-     * @return the amount associated with this movement.
-     */
-    double getAmount();
-
-    /**
-     * Returns a short description associated with this movement.
-     *
-     * @return a short description associated with this movement.
-     */
-    String getDescription();
-
-    /**
-     * Returns the transaction where this movement occur.
-     *
-     * @return the transaction where this movement occur.
-     */
-    Transaction getTransaction();
 }

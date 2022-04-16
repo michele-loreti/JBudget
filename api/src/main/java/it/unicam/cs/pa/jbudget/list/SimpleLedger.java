@@ -8,12 +8,13 @@
 
 package it.unicam.cs.pa.jbudget.list;
 
+import java.util.LinkedList;
 import java.util.List;
-import java.util.function.BiFunction;
 
 public class SimpleLedger implements Ledger {
 
     private final FactoryRegistry<Ledger, Transaction> transactions;
+    private final FactoryRegistry<AccountInfo, Account> accounts;
 
     public SimpleLedger() {
         // OLD STYLE
@@ -29,7 +30,8 @@ public class SimpleLedger implements Ledger {
 //        );
         this.transactions =
                 new FactoryRegistry<>(LedgerTransaction::new);
-
+        this.accounts =
+                new FactoryRegistry<>((i, ai) -> new LedgerAccount(i, this, ai));
     }
 
     public Transaction newTransaction() {
@@ -53,16 +55,61 @@ public class SimpleLedger implements Ledger {
 
     @Override
     public double getTotalBalance() {
-        return 0;
+        double sum = getOpeningBalance();
+        for(Transaction t: getTransactions()) {
+            sum += t.balance();
+        }
+        return sum;
+    }
+
+    @Override
+    public double getOpeningBalance() {
+        double sum = 0.0;
+        for (Account a: getAccounts()) {
+            sum += a.getBalance();
+        }
+        return sum;
     }
 
     @Override
     public double getTotalAssets() {
-        return 0;
+        double sum = 0.0;
+        for (Account a: getAccounts()) {
+            if (a.getAccountType() == AccountType.ASSET) {
+                sum += a.getBalance();
+            }
+        }
+        return sum;
     }
 
     @Override
     public double getTotalLiabilities() {
-        return 0;
+        double sum = 0.0;
+        for (Account a: getAccounts()) {
+            if (a.getAccountType() == AccountType.LIABILITY) {
+                sum += a.getBalance();
+            }
+        }
+        return sum;
     }
+
+    @Override
+    public List<Movement> getAccountMovement(Account account) {
+        List<Movement> toReturn = new LinkedList<>();
+        for(Transaction t: getTransactions()) {
+            for(Movement m: t.getMovements()) {
+                if (m.account() == account) {
+                    toReturn.add(m);
+                }
+            }
+        }
+        return toReturn;
+    }
+
+    @Override
+    public Account newAccount(AccountType type, String name, double openingBalance, String description) {
+        return accounts.create(new AccountInfo(type, name, openingBalance, description));
+    }
+
+
 }
