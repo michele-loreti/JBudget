@@ -9,6 +9,7 @@
 package it.unicam.cs.pa.jbudget.list;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * This class is used to create and retrieve objects that
@@ -72,4 +73,6 @@ public interface Registry<R, T extends ElementWithId> {
      * @return the list of elements in the given registry.
      */
     List<T> getElements();
+
+    Stream<T> stream();
 }

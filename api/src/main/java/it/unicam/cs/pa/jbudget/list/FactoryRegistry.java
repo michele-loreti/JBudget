@@ -11,6 +11,7 @@ package it.unicam.cs.pa.jbudget.list;
 
 import java.util.*;
 import java.util.function.BiFunction;
+import java.util.stream.Stream;
 
 /**
  * This class is used to create and store objects that are identified by a single integer. The class guarantees
@@ -69,4 +70,10 @@ public class FactoryRegistry<R,T extends ElementWithId> implements Registry<R,T>
     public List<T> getElements() {
         return new LinkedList<>(elements.values());
     }
+
+    @Override
+    public Stream<T> stream() {
+        return elements.values().stream();
+    }
+
 }

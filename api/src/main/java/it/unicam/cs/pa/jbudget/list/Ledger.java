@@ -9,6 +9,7 @@
 package it.unicam.cs.pa.jbudget.list;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * A ledger is a book or collection of accounts in which account transactions are recorded.
@@ -70,7 +71,14 @@ public interface Ledger {
      * @param account a non-null reference to an account in this ledger.
      * @return the movement of the given account.
      */
-    List<Movement> getAccountMovement(Account account);
+    default List<Movement> getAccountMovement(Account account) {
+        return getAccountMovement(account::equals);
+    }
+
+    List<Movement> getAccountMovement(Predicate<? super Account> account);
+
+
+    List<Transaction> getTransactions(Predicate<? super Transaction> pred);
 
     /**
      * Creates an account with the given type, name and openingBalance.
