@@ -73,11 +73,12 @@ public class LedgerTransaction extends AbstractElementWithId implements Transact
 
     @Override
     public double balance() {
-        double toReturn = 0.0;
-        for (Movement m: getMovements()) {
-            toReturn += m.amount();
-        }
-        return toReturn;
+//        double toReturn = 0.0;
+//        for (Movement m: getMovements()) {
+//            toReturn += m.amount();
+//        }
+//        return toReturn;
+        return this.movements.stream().mapToDouble(Movement::amount).sum();
     }
 
     @Override

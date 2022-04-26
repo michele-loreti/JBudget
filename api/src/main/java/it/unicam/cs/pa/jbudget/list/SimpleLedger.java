@@ -11,6 +11,7 @@ package it.unicam.cs.pa.jbudget.list;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class SimpleLedger implements Ledger {
 
@@ -46,7 +47,7 @@ public class SimpleLedger implements Ledger {
 
     @Override
     public List<Account> getAccounts() {
-        return null;
+        return accounts.getElements();
     }
 
     @Override
@@ -56,20 +57,22 @@ public class SimpleLedger implements Ledger {
 
     @Override
     public double getTotalBalance() {
-        double sum = getOpeningBalance();
-        for(Transaction t: getTransactions()) {
-            sum += t.balance();
-        }
-        return sum;
+//        double sum = getOpeningBalance();
+//        for(Transaction t: getTransactions()) {
+//            sum += t.balance();
+//        }
+//        return sum;
+        return getOpeningBalance()+transactions.stream().mapToDouble(Transaction::balance).sum();
     }
 
     @Override
     public double getOpeningBalance() {
-        double sum = 0.0;
-        for (Account a: getAccounts()) {
-            sum += a.getBalance();
-        }
-        return sum;
+//        double sum = 0.0;
+//        for (Account a: getAccounts()) {
+//            sum += a.getBalance();
+//        }
+//        return sum;
+        return this.accounts.stream().mapToDouble(Account::getOpeningBalance).sum();
     }
 
     private double sumAccountBalances(Predicate<? super Account> pred) {
@@ -100,26 +103,32 @@ public class SimpleLedger implements Ledger {
 
     @Override
     public List<Movement> getAccountMovement(Predicate<? super Account> pred) {
-        List<Movement> toReturn = new LinkedList<>();
-        for(Transaction t: getTransactions()) {
-            for(Movement m: t.getMovements()) {
-                if (pred.test(m.account())) {
-                    toReturn.add(m);
-                }
-            }
-        }
-        return toReturn;
+//        List<Movement> toReturn = new LinkedList<>();
+//        for(Transaction t: getTransactions()) {
+//            for(Movement m: t.getMovements()) {
+//                if (pred.test(m.account())) {
+//                    toReturn.add(m);
+//                }
+//            }
+//        }
+//        return toReturn;
+        return transactions.stream()
+                .map(Transaction::getMovements)
+                .flatMap(List::stream)
+                .filter(m -> pred.test(m.account()))
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<Transaction> getTransactions(Predicate<? super Transaction> pred) {
-        List<Transaction> toReturn = new LinkedList<>();
-        for(Transaction t: getTransactions()) {
-                if (pred.test(t)) {
-                    toReturn.add(t);
-            }
-        }
-        return toReturn;
+//        List<Transaction> toReturn = new LinkedList<>();
+//        for(Transaction t: getTransactions()) {
+//                if (pred.test(t)) {
+//                    toReturn.add(t);
+//            }
+//        }
+//        return toReturn;
+        return transactions.stream().filter(pred).collect(Collectors.toList());
     }
 
     @Override
